@@ -57,5 +57,8 @@ public class ChessMove {
         return Objects.hash(startPosition, endPosition, promotionPiece);
     }
 
-    //overide toString later
+    @Override
+    public String toString() {
+        return String.format("%s%s", startPosition, endPosition);
+    }
 }
