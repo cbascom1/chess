@@ -3,6 +3,7 @@ package chess;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.ArrayList;
 
 /**
  * Represents a single chess piece
@@ -110,7 +111,30 @@ public class ChessPiece {
     }
 
     private Collection<ChessMove> slidingMoves(ChessBoard board, ChessPosition pos, int[][] directions) {
-
+        // make a list for possible moves
+        List<ChessMove> moves = new ArrayList<>();
+        // check each direction
+        for (int[] direction : directions) {
+            int row = pos.getRow() + direction[0];
+            int col = pos.getColumn() + direction[1];
+            // continue in those directions until stopped
+            while (inBounds(row, col)) {
+                ChessPosition next = new ChessPosition(row, col);
+                ChessPiece occupant = board.getPiece(next);
+                // check the space
+                if (occupant == null) {
+                    moves.add(new ChessMove(pos, next, null));
+                } else {
+                    if (occupant.getTeamColor() != pieceColor) {
+                        moves.add(new ChessMove(pos, next, null));
+                    }
+                    break;
+                }
+                row += direction[0];
+                col += direction[1];
+            }
+        }
+        return moves;
     }
 
     private Collection<ChessMove> steppingMoves(ChessBoard board, ChessPosition pos, int[][] directions) {
@@ -120,4 +144,9 @@ public class ChessPiece {
     private Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition pos) {
 
     }
+
+    private static boolean inBounds(int row, int col) {
+        return row >= 1 && row <= 8 && col >= 1 && col <= 8;
+    }
 }
+
