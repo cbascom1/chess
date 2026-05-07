@@ -155,8 +155,11 @@ public class ChessPiece {
     }
 
     private Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition pos) {
-
+        List<ChessMove> moves = new ArrayList<>();
+        return moves;
     }
+
+
 
     private static boolean inBounds(int row, int col) {
         return row >= 1 && row <= 8 && col >= 1 && col <= 8;
