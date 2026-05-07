@@ -67,6 +67,57 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        return List.of();
+        return switch (type) {
+            case KING -> kingMoves(board, myPosition);
+            case QUEEN  -> queenMoves(board, myPosition);
+            case BISHOP -> bishopMoves(board, myPosition);
+            case KNIGHT -> knightMoves(board, myPosition);
+            case ROOK   -> rookMoves(board, myPosition);
+            case PAWN   -> pawnMoves(board, myPosition);
+        };
+    }
+    private static final int[][] BISHOP_DIRECTIONS = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
+    private static final int[][] ROOK_DIRECTIONS   = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+    private static final int[][] QUEEN_DIRECTIONS  = {
+            {1, 1}, {1, -1}, {-1, 1}, {-1, -1},
+            {1, 0}, {-1, 0}, {0, 1}, {0, -1}
+    };
+    private static final int[][] KING_DIRECTIONS   = QUEEN_DIRECTIONS;
+    private static final int[][] KNIGHT_DIRECTIONS = {
+            {2, 1}, {2, -1}, {-2, 1}, {-2, -1},
+            {1, 2}, {1, -2}, {-1, 2}, {-1, -2}
+    };
+
+
+    private Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition pos) {
+        return slidingMoves(board, pos, BISHOP_DIRECTIONS);
+    }
+
+    private Collection<ChessMove> rookMoves(ChessBoard board, ChessPosition pos) {
+        return slidingMoves(board, pos, ROOK_DIRECTIONS);
+    }
+
+    private Collection<ChessMove> queenMoves(ChessBoard board, ChessPosition pos) {
+        return slidingMoves(board, pos, QUEEN_DIRECTIONS);
+    }
+
+    private Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition pos) {
+        return steppingMoves(board, pos, KING_DIRECTIONS);
+    }
+
+    private Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition pos) {
+        return steppingMoves(board, pos, KNIGHT_DIRECTIONS);
+    }
+
+    private Collection<ChessMove> slidingMoves(ChessBoard board, ChessPosition pos, int[][] directions) {
+
+    }
+
+    private Collection<ChessMove> steppingMoves(ChessBoard board, ChessPosition pos, int[][] directions) {
+
+    }
+
+    private Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition pos) {
+
     }
 }
