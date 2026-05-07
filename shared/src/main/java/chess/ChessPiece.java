@@ -138,7 +138,20 @@ public class ChessPiece {
     }
 
     private Collection<ChessMove> steppingMoves(ChessBoard board, ChessPosition pos, int[][] directions) {
-
+        // make a list for possible moves
+        List<ChessMove> moves = new ArrayList<>();
+        // check each direction
+        for (int[] direction : directions) {
+            int row = pos.getRow() + direction[0];
+            int col = pos.getColumn() + direction[1];
+            if (!inBounds(row, col)) continue;
+            ChessPosition next = new ChessPosition(row, col);
+            ChessPiece occupant = board.getPiece(next);
+            if (occupant == null || occupant.getTeamColor() != pieceColor) {
+                moves.add(new ChessMove(pos, next, null));
+            }
+        }
+        return moves;
     }
 
     private Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition pos) {
