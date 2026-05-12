@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -49,7 +50,29 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+
+        ChessPiece piece = board.getPiece(startPosition);
+        if (piece == null) {
+            return null;
+        }
+        Collection<ChessMove> moves = piece.pieceMoves(board, startPosition);
+        Collection<ChessMove> legalMoves = new ArrayList<>();
+
+        for (ChessMove move : moves) {
+            ChessBoard boardCopy = new ChessBoard(board);
+
+            ChessPiece pieceCopy = boardCopy.getPiece(move.getStartPosition());
+            if (move.getPromotionPiece() != null) {
+                pieceCopy = new ChessPiece(piece.getTeamColor(), move.getPromotionPiece());
+            }
+            boardCopy.addPiece(move.getEndPosition(), pieceCopy);
+            boardCopy.addPiece(move.getStartPosition(), null);
+
+            if(!isInCheckOtherBoard(piece.getTeamColor(), boardCopy)) {
+                legalMoves.add(move);
+            }
+        }
+        return legalMoves;
     }
 
     /**
@@ -141,5 +164,23 @@ public class ChessGame {
             }
         }
         return null;
+    }
+
+    public boolean isInCheckOtherBoard(TeamColor teamColor, ChessBoard otherBoard) {
+        ChessPosition kingPosition = findKing(teamColor);
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <= 8; col++) {
+                ChessPosition position = new ChessPosition(row, col);
+                ChessPiece piece = otherBoard.getPiece(position);
+                if (piece != null && piece.getTeamColor() != teamColor) {
+                    for (ChessMove move : piece.pieceMoves(otherBoard, position)) {
+                        if (move.getEndPosition() == kingPosition) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 }
