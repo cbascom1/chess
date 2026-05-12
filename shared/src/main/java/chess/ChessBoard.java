@@ -16,6 +16,8 @@ public class ChessBoard {
         
     }
 
+
+
     /**
      * Adds a chess piece to the chessboard
      *
@@ -97,5 +99,15 @@ public class ChessBoard {
     @Override
     public int hashCode() {
         return Arrays.deepHashCode(squares);
+    }
+
+    //make a deep-copy of ChessBoard
+    public ChessBoard(ChessBoard other) {
+        this.squares = new ChessPiece[8][8];
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                this.squares[row][col] = other.squares[row][col];
+            }
+        }
     }
 }
