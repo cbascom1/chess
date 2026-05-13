@@ -26,7 +26,7 @@ public class ChessGame {
     private ChessMove lastMove = null;
 
     public ChessGame() {
-
+        board.resetBoard();
     }
 
     /**
