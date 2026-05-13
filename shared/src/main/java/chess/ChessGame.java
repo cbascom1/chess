@@ -191,7 +191,7 @@ public class ChessGame {
         return null;
     }
 
-    public boolean isInCheckOtherBoard(TeamColor teamColor, ChessBoard otherBoard) {
+    private boolean isInCheckOtherBoard(TeamColor teamColor, ChessBoard otherBoard) {
         ChessPosition kingPosition = findKing(teamColor, otherBoard);
         for (int row = 1; row <= 8; row++) {
             for (int col = 1; col <= 8; col++) {
