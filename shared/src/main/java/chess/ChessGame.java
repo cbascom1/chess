@@ -120,7 +120,7 @@ public class ChessGame {
                 ChessPiece piece = board.getPiece(position);
                 if (piece != null && piece.getTeamColor() != teamColor) {
                     for (ChessMove move : piece.pieceMoves(board, position)) {
-                        if (move.getEndPosition() == kingPosition) {
+                        if (move.getEndPosition().equals(kingPosition)) {
                             return true;
                         }
                     }
@@ -193,7 +193,7 @@ public class ChessGame {
                 ChessPiece piece = otherBoard.getPiece(position);
                 if (piece != null && piece.getTeamColor() != teamColor) {
                     for (ChessMove move : piece.pieceMoves(otherBoard, position)) {
-                        if (move.getEndPosition() == kingPosition) {
+                        if (move.getEndPosition().equals(kingPosition)) {
                             return true;
                         }
                     }
