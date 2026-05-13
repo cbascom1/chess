@@ -15,15 +15,7 @@ public class ChessGame {
     private ChessGame.TeamColor teamTurn = TeamColor.WHITE;
     private ChessBoard board = new ChessBoard();
 
-    //extra credit
-    private boolean whiteKingMoved = false;
-    private boolean whiteQueensideRookMoved = false;
-    private boolean whiteKingsideRookMoved = false;
-    private boolean blackKingMoved = false;
-    private boolean blackQueensideRookMoved = false;
-    private boolean blackKingsideRookMoved = false;
-
-    private ChessMove lastMove = null;
+    //decided not to do extra credit
 
     public ChessGame() {
         board.resetBoard();
