@@ -82,7 +82,17 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        ChessPosition startPosition = move.getStartPosition();
+        if (startPosition == null) {
+            throw new InvalidMoveException();
+        }
+        ChessPiece piece = board.getPiece(startPosition);
+        if (piece.getTeamColor() != teamTurn || !validMoves(startPosition).contains(move)) {
+            throw new InvalidMoveException();
+        }
+        board.addPiece(move.getEndPosition(), piece);
+        board.addPiece(startPosition, null);
+        flipTurn();
     }
 
     /**
@@ -196,5 +206,13 @@ public class ChessGame {
             }
         }
         return false;
+    }
+
+    private void flipTurn() {
+        if (teamTurn == TeamColor.WHITE) {
+            setTeamTurn(TeamColor.BLACK);
+        } else {
+            setTeamTurn(TeamColor.WHITE);
+        }
     }
 }
