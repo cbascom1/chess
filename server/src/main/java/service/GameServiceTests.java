@@ -28,7 +28,7 @@ public class GameServiceTests {
         dataAccess = new MemoryDataAccess();
         service = new GameService(dataAccess);
         validToken = "valid-token-for-testing";
-        dataAccess.createAuth(new AuthData(validToken, "cooper"));
+        dataAccess.createAuth(new AuthData(validToken, "Batman"));
     }
 
     @Test
@@ -73,7 +73,7 @@ public class GameServiceTests {
 
         var listed = service.listGames(validToken);
         var item = listed.games().iterator().next();
-        assertEquals("cooper", item.whiteUsername());
+        assertEquals("Batman", item.whiteUsername());
     }
 
     @Test
