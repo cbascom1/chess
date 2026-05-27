@@ -15,6 +15,8 @@ import com.google.gson.Gson;
 import service.ClearService;
 import java.util.Map;
 
+import service.UserService;
+
 public class Server {
 
     private final Javalin javalin;
@@ -30,6 +32,12 @@ public class Server {
         javalin.delete("/db", ctx -> {
             new ClearService(dataAccess).clear();
             ctx.status(200).result("{}");
+        });
+
+        javalin.post("/user", ctx -> {
+            var req = gson.fromJson(ctx.body(), UserService.RegisterRequest.class);
+            var result = new UserService(dataAccess).register(req);
+            ctx.status(200).json(result);
         });
 
         javalin.exception(BadRequestException.class, (e, ctx) ->
