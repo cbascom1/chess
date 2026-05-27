@@ -37,17 +37,21 @@ public class Server {
         javalin.post("/user", ctx -> {
             var req = gson.fromJson(ctx.body(), UserService.RegisterRequest.class);
             var result = new UserService(dataAccess).register(req);
-            ctx.status(200).json(result);
+            ctx.status(200).result(gson.toJson(result));
         });
 
         javalin.exception(BadRequestException.class, (e, ctx) ->
-                ctx.status(400).json(Map.of("message", e.getMessage())));
+                ctx.status(400).result(gson.toJson(Map.of("message", e.getMessage()))));
+
         javalin.exception(UnauthorizedException.class, (e, ctx) ->
-                ctx.status(401).json(Map.of("message", e.getMessage())));
+                ctx.status(401).result(gson.toJson(Map.of("message", e.getMessage()))));
+
         javalin.exception(AlreadyTakenException.class, (e, ctx) ->
-                ctx.status(403).json(Map.of("message", e.getMessage())));
+                ctx.status(403).result(gson.toJson(Map.of("message", e.getMessage()))));
+
         javalin.exception(Exception.class, (e, ctx) ->
-                ctx.status(500).json(Map.of("message", "Error: " + e.getMessage())));
+                ctx.status(500).result(gson.toJson(Map.of("message", "Error: " + e.getMessage()))));
+
 
     }
 
