@@ -40,6 +40,18 @@ public class Server {
             ctx.status(200).result(gson.toJson(result));
         });
 
+        javalin.post("/session", ctx -> {
+            var req = gson.fromJson(ctx.body(), UserService.LoginRequest.class);
+            var result = new UserService(dataAccess).login(req);
+            ctx.status(200).result(gson.toJson(result));
+        });
+
+        javalin.delete("/session", ctx -> {
+            String token = ctx.header("authorization");
+            new UserService(dataAccess).logout(token);
+            ctx.status(200).result("{}");
+        });
+
         javalin.exception(BadRequestException.class, (e, ctx) ->
                 ctx.status(400).result(gson.toJson(Map.of("message", e.getMessage()))));
 
