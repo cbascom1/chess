@@ -17,6 +17,9 @@ import java.util.Map;
 
 import service.UserService;
 
+import service.GameService;
+
+
 public class Server {
 
     private final Javalin javalin;
@@ -49,6 +52,26 @@ public class Server {
         javalin.delete("/session", ctx -> {
             String token = ctx.header("authorization");
             new UserService(dataAccess).logout(token);
+            ctx.status(200).result("{}");
+        });
+
+        javalin.get("/game", ctx -> {
+            String token = ctx.header("authorization");
+            var result = new GameService(dataAccess).listGames(token);
+            ctx.status(200).result(gson.toJson(result));
+        });
+
+        javalin.post("/game", ctx -> {
+            String token = ctx.header("authorization");
+            var req = gson.fromJson(ctx.body(), GameService.CreateGameRequest.class);
+            var result = new GameService(dataAccess).createGame(token, req);
+            ctx.status(200).result(gson.toJson(result));
+        });
+
+        javalin.put("/game", ctx -> {
+            String token = ctx.header("authorization");
+            var req = gson.fromJson(ctx.body(), GameService.JoinGameRequest.class);
+            new GameService(dataAccess).joinGame(token, req);
             ctx.status(200).result("{}");
         });
 
