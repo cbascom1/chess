@@ -35,4 +35,14 @@ public class ClearServiceTests {
         assertNull(dataAccess.getAuth("token-1"));
         assertEquals(0, dataAccess.listGames().size());
     }
+
+    @Test
+    void clearOnEmptyDatabaseDoesNotThrow() throws Exception {
+        service.clear();
+        service.clear();
+
+        assertNull(dataAccess.getUser("Batman"));
+        assertNull(dataAccess.getAuth("token-1"));
+        assertEquals(0, dataAccess.listGames().size());
+    }
 }
