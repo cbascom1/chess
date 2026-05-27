@@ -1,15 +1,45 @@
 package server;
 
+
 import io.javalin.*;
+
+import dataaccess.UnauthorizedException;
+import dataaccess.AlreadyTakenException;
+import dataaccess.BadRequestException;
+
+import dataaccess.DataAccess;
+import dataaccess.MemoryDataAccess;
+
+import com.google.gson.Gson;
+
+import service.ClearService;
+import java.util.Map;
 
 public class Server {
 
     private final Javalin javalin;
+    private final DataAccess dataAccess = new MemoryDataAccess();
+    private final Gson gson = new Gson();
+
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
         // Register your endpoints and exception handlers here.
+
+        javalin.delete("/db", ctx -> {
+            new ClearService(dataAccess).clear();
+            ctx.status(200).result("{}");
+        });
+
+        javalin.exception(BadRequestException.class, (e, ctx) ->
+                ctx.status(400).json(Map.of("message", e.getMessage())));
+        javalin.exception(UnauthorizedException.class, (e, ctx) ->
+                ctx.status(401).json(Map.of("message", e.getMessage())));
+        javalin.exception(AlreadyTakenException.class, (e, ctx) ->
+                ctx.status(403).json(Map.of("message", e.getMessage())));
+        javalin.exception(Exception.class, (e, ctx) ->
+                ctx.status(500).json(Map.of("message", "Error: " + e.getMessage())));
 
     }
 
