@@ -8,7 +8,9 @@ import dataaccess.AlreadyTakenException;
 import dataaccess.BadRequestException;
 
 import dataaccess.DataAccess;
-import dataaccess.MemoryDataAccess;
+
+import dataaccess.SqlDataAccess;
+import dataaccess.DataAccessException;
 
 import com.google.gson.Gson;
 
@@ -23,11 +25,17 @@ import service.GameService;
 public class Server {
 
     private final Javalin javalin;
-    private final DataAccess dataAccess = new MemoryDataAccess();
+    private final DataAccess dataAccess;
     private final Gson gson = new Gson();
 
 
     public Server() {
+        try {
+            this.dataAccess = new SqlDataAccess();
+        } catch (DataAccessException ex) {
+            throw new RuntimeException("Failed to initialize database: " + ex.getMessage(), ex);
+        }
+
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
         // Register your endpoints and exception handlers here.
