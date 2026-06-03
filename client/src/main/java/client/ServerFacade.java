@@ -78,4 +78,40 @@ public class ServerFacade {
         }
         return "Error: request failed with status " + status;
     }
+
+    public ServerTypes.RegisterResult register(String username, String password, String email)
+            throws ResponseException {
+        var body = new ServerTypes.RegisterRequest(username, password, email);
+        return makeRequest("POST", "/user", body, null, ServerTypes.RegisterResult.class);
+    }
+
+    public ServerTypes.LoginResult login(String username, String password)
+            throws ResponseException {
+        var body = new ServerTypes.LoginRequest(username, password);
+        return makeRequest("POST", "/session", body, null, ServerTypes.LoginResult.class);
+    }
+
+    public void logout(String authToken) throws ResponseException {
+        makeRequest("DELETE", "/session", null, authToken, null);
+    }
+
+    public ServerTypes.ListGamesResult listGames(String authToken) throws ResponseException {
+        return makeRequest("GET", "/game", null, authToken, ServerTypes.ListGamesResult.class);
+    }
+
+    public ServerTypes.CreateGameResult createGame(String authToken, String gameName)
+            throws ResponseException {
+        var body = new ServerTypes.CreateGameRequest(gameName);
+        return makeRequest("POST", "/game", body, authToken, ServerTypes.CreateGameResult.class);
+    }
+
+    public void joinGame(String authToken, String playerColor, Integer gameID)
+            throws ResponseException {
+        var body = new ServerTypes.JoinGameRequest(playerColor, gameID);
+        makeRequest("PUT", "/game", body, authToken, null);
+    }
+
+    public void clear() throws ResponseException {
+        makeRequest("DELETE", "/db", null, null, null);
+    }
 }
