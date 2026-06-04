@@ -1,6 +1,9 @@
 package dataaccess;
-import chess.ChessGame;
 
+import chess.ChessGame;
+import model.UserData;
+import model.GameData;
+import model.AuthData;
 import java.util.*;
 
 public class MemoryDataAccess implements DataAccess {
