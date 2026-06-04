@@ -1,6 +1,6 @@
 package dataaccess;
 import chess.ChessGame;
-import model.*;
+
 import java.util.*;
 
 public class MemoryDataAccess implements DataAccess {
