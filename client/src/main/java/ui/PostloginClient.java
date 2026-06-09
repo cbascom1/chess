@@ -2,12 +2,16 @@ package ui;
 
 import client.ResponseException;
 import client.ServerFacade;
+import client.ServerTypes;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class PostloginClient {
 
     private final ServerFacade facade;
     private final String authToken;
+    private java.util.List<ServerTypes.GameListItem> lastGames = new java.util.ArrayList<>();
 
     public PostloginClient(String serverUrl, String authToken) {
         this.facade = new ServerFacade(serverUrl);
@@ -41,19 +45,94 @@ public class PostloginClient {
     }
 
     private String createGame(String[] params) {
-        return "create not implemented yet";
+        if (params.length != 1) {
+            return "Expected: create <NAME>";
+        }
+        try {
+            facade.createGame(authToken, params[0]);
+            return "Created game: " + params[0];
+        } catch (ResponseException e) {
+            return "Could not create game.";
+        }
     }
 
-    private String listGames() {
-        return "list not implemented yet";
+    public String listGames() {
+        try {
+            ServerTypes.ListGamesResult result = facade.listGames(authToken);
+            this.lastGames = new ArrayList<>(result.games());
+
+            if (lastGames.isEmpty()) {
+                return "No games exist yet. Use 'create' to make one.";
+            }
+
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < lastGames.size(); i++) {
+                var game = lastGames.get(i);
+                int number = i + 1;
+                sb.append(number)
+                        .append(". ")
+                        .append(game.gameName())
+                        .append(" White: ")
+                        .append(playerOrEmpty(game.whiteUsername()))
+                        .append(" Black: ")
+                        .append(playerOrEmpty(game.blackUsername()))
+                        .append("\n");
+            }
+            return sb.toString();
+        } catch (ResponseException e) {
+            return "Could not list games.";
+        }
+    }
+
+    private String playerOrEmpty(String username) {
+        return username == null ? "open" : username;
     }
 
     private String playGame(String[] params) {
-        return "play not implemented yet";
+        if (params.length != 2) {
+            return "Usage: play <game number> <white|black>";
+        }
+        int gameNumber;
+        try {
+            gameNumber = Integer.parseInt(params[0]);
+        } catch (NumberFormatException ex) {
+            return "Game number must be a number.";
+        }
+        String color = params[1].toLowerCase();
+        if (!color.equals("white") && !color.equals("black")) {
+            return "Usage: play <game number> <white|black>";
+        }
+        int index = gameNumber - 1;
+        if (index < 0 || index >= lastGames.size()) {
+            return "No game with that number. Try 'list' first.";
+        }
+        int gameID = lastGames.get(index).gameID();
+        try {
+            facade.joinGame(authToken, color.toUpperCase(), gameID);
+
+            return "Joined game " + gameNumber + " as " + color + ".";
+        } catch (ResponseException ex) {
+            return "Could not join game. That color may be taken.";
+        }
     }
 
     private String observeGame(String[] params) {
-        return "observe not implemented yet";
+        if (params.length != 1) {
+            return "Usage: observe <game number>";
+        }
+        int gameNumber;
+        try {
+            gameNumber = Integer.parseInt(params[0]);
+        } catch (NumberFormatException ex) {
+            return "Game number must be a number.";
+        }
+        int index = gameNumber - 1;
+        if (index < 0 || index >= lastGames.size()) {
+            return "No game with that number. Try 'list' first.";
+        }
+        int gameID = lastGames.get(index).gameID();
+
+        return "Observing game " + gameNumber + ".";
     }
 
     public String logout() {
