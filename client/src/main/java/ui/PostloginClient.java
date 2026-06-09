@@ -1,5 +1,7 @@
 package ui;
 
+import chess.ChessBoard;
+import chess.ChessGame;
 import client.ResponseException;
 import client.ServerFacade;
 import client.ServerTypes;
@@ -109,8 +111,11 @@ public class PostloginClient {
         int gameID = lastGames.get(index).gameID();
         try {
             facade.joinGame(authToken, color.toUpperCase(), gameID);
-
-            return "Joined game " + gameNumber + " as " + color + ".";
+            ChessBoard board = new ChessBoard();
+            board.resetBoard();
+            ChessGame.TeamColor perspective = color.equals("white")
+                    ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
+            return "\n" + BoardRenderer.render(board, perspective);
         } catch (ResponseException ex) {
             return "Could not join game. That color may be taken.";
         }
@@ -131,8 +136,9 @@ public class PostloginClient {
             return "No game with that number. Try 'list' first.";
         }
         int gameID = lastGames.get(index).gameID();
-
-        return "Observing game " + gameNumber + ".";
+        ChessBoard board = new ChessBoard();
+        board.resetBoard();
+        return "\n" + BoardRenderer.render(board, ChessGame.TeamColor.WHITE);
     }
 
     public String logout() {

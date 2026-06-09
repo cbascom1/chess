@@ -1,0 +1,62 @@
+package ui;
+
+import chess.ChessBoard;
+import chess.ChessGame;
+import chess.ChessPiece;
+import chess.ChessPosition;
+
+import static ui.EscapeSequences.*;
+
+public class BoardRenderer {
+
+    public static String render(ChessBoard board, ChessGame.TeamColor perspective) {
+        boolean whiteView = perspective == ChessGame.TeamColor.WHITE;
+        StringBuilder sb = new StringBuilder();
+
+        int[] rowOrder = whiteView ? new int[]{8, 7, 6, 5, 4, 3, 2, 1}
+                : new int[]{1, 2, 3, 4, 5, 6, 7, 8};
+        int[] colOrder = whiteView ? new int[]{1, 2, 3, 4, 5, 6, 7, 8}
+                : new int[]{8, 7, 6, 5, 4, 3, 2, 1};
+
+        sb.append(columnHeader(colOrder));
+        for (int row : rowOrder) {
+            sb.append(SET_TEXT_COLOR_LIGHT_GREY).append(" ").append(row).append(" ").append(RESET_TEXT_COLOR);
+            for (int col : colOrder) {
+                boolean lightSquare = (row + col) % 2 != 0;
+                sb.append(lightSquare ? SET_BG_COLOR_WHITE : SET_BG_COLOR_DARK_GREY);
+                sb.append(glyph(board.getPiece(new ChessPosition(row, col))));
+                sb.append(RESET_BG_COLOR);
+            }
+            sb.append(SET_TEXT_COLOR_LIGHT_GREY).append(" ").append(row).append(" ").append(RESET_TEXT_COLOR);
+            sb.append("\n");
+        }
+        sb.append(columnHeader(colOrder));
+        return sb.toString();
+    }
+
+    private static String columnHeader(int[] colOrder) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("   ");
+        for (int col : colOrder) {
+            char letter = (char) ('a' + col - 1);
+            sb.append(SET_TEXT_COLOR_LIGHT_GREY).append(" ").append(letter).append(" ").append(RESET_TEXT_COLOR);
+        }
+        sb.append("\n");
+        return sb.toString();
+    }
+
+    private static String glyph(ChessPiece piece) {
+        if (piece == null) {
+            return EMPTY;
+        }
+        boolean white = piece.getTeamColor() == ChessGame.TeamColor.WHITE;
+        return switch (piece.getPieceType()) {
+            case KING   -> white ? WHITE_KING   : BLACK_KING;
+            case QUEEN  -> white ? WHITE_QUEEN  : BLACK_QUEEN;
+            case ROOK   -> white ? WHITE_ROOK   : BLACK_ROOK;
+            case BISHOP -> white ? WHITE_BISHOP : BLACK_BISHOP;
+            case KNIGHT -> white ? WHITE_KNIGHT : BLACK_KNIGHT;
+            case PAWN   -> white ? WHITE_PAWN   : BLACK_PAWN;
+        };
+    }
+}
