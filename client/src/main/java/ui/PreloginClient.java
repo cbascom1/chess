@@ -33,8 +33,6 @@ public class PreloginClient {
         };
     }
 
-
-    //not implemented todavia
     private String login(String[] params)  {
         if (params.length != 2) {
             return "Expected: login <USERNAME> <PASSWORD>";
@@ -59,6 +57,10 @@ public class PreloginClient {
         } catch (ResponseException e) {
             return "Could not register. That username may already be taken.";
         }
+    }
+
+    public void clearAuth() {
+        this.authToken = null;
     }
 
     private String help() {
