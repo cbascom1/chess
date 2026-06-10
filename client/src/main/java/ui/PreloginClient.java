@@ -73,7 +73,7 @@ public class PreloginClient {
 
     private String describeError(ResponseException e) {
         if (e.statusCode() == 0) {
-            return "Could not reach the server. Is it running?";
+            return "Could not reach the server.";
         }
         return switch (e.statusCode()) {
             case 400 -> "Please check your input and try again.";

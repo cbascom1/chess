@@ -23,7 +23,7 @@ public class BoardRenderer {
             sb.append(SET_TEXT_COLOR_LIGHT_GREY).append(" ").append(row).append(" ").append(RESET_TEXT_COLOR);
             for (int col : colOrder) {
                 boolean lightSquare = (row + col) % 2 != 0;
-                sb.append(lightSquare ? SET_BG_COLOR_WHITE : SET_BG_COLOR_DARK_GREY);
+                sb.append(lightSquare ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_BLACK);
                 sb.append(glyph(board.getPiece(new ChessPosition(row, col))));
                 sb.append(RESET_BG_COLOR);
             }
@@ -50,7 +50,8 @@ public class BoardRenderer {
             return EMPTY;
         }
         boolean white = piece.getTeamColor() == ChessGame.TeamColor.WHITE;
-        return switch (piece.getPieceType()) {
+        String color = white ? SET_TEXT_COLOR_RED : SET_TEXT_COLOR_BLUE;
+        String symbol = switch (piece.getPieceType()) {
             case KING   -> white ? WHITE_KING   : BLACK_KING;
             case QUEEN  -> white ? WHITE_QUEEN  : BLACK_QUEEN;
             case ROOK   -> white ? WHITE_ROOK   : BLACK_ROOK;
@@ -58,5 +59,6 @@ public class BoardRenderer {
             case KNIGHT -> white ? WHITE_KNIGHT : BLACK_KNIGHT;
             case PAWN   -> white ? WHITE_PAWN   : BLACK_PAWN;
         };
+        return color + symbol;
     }
 }

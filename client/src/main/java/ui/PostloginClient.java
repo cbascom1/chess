@@ -152,7 +152,7 @@ public class PostloginClient {
 
     private String describeError(ResponseException e) {
         if (e.statusCode() == 0) {
-            return "Could not reach the server. Is it running?";
+            return "Could not reach the server.";
         }
         return e.getMessage().replace("Error: ", "");
     }
