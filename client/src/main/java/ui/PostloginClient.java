@@ -54,7 +54,7 @@ public class PostloginClient {
             facade.createGame(authToken, params[0]);
             return "Created game: " + params[0];
         } catch (ResponseException e) {
-            return "Could not create game.";
+            return describeError(e);
         }
     }
 
@@ -82,7 +82,7 @@ public class PostloginClient {
             }
             return sb.toString();
         } catch (ResponseException e) {
-            return "Could not list games.";
+            return describeError(e);
         }
     }
 
@@ -116,8 +116,8 @@ public class PostloginClient {
             ChessGame.TeamColor perspective = color.equals("white")
                     ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
             return "\n" + BoardRenderer.render(board, perspective);
-        } catch (ResponseException ex) {
-            return "Could not join game. That color may be taken.";
+        } catch (ResponseException e) {
+            return describeError(e);
         }
     }
 
@@ -148,6 +148,13 @@ public class PostloginClient {
         } catch (ResponseException e) {
             return "logout";
         }
+    }
+
+    private String describeError(ResponseException e) {
+        if (e.statusCode() == 0) {
+            return "Could not reach the server. Is it running?";
+        }
+        return e.getMessage().replace("Error: ", "");
     }
 
 }

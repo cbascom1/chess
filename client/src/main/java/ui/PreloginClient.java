@@ -42,7 +42,7 @@ public class PreloginClient {
             this.authToken = result.authToken();
             return "Logged in as " + result.username() + ".";
         } catch (ResponseException e) {
-            return "Login failed. Check your username and password.";
+            return describeError(e);
         }
     }
 
@@ -55,7 +55,7 @@ public class PreloginClient {
             this.authToken = result.authToken();
             return "Logged in as " + result.username() + ".";
         } catch (ResponseException e) {
-            return "Could not register. That username may already be taken.";
+            return describeError(e);
         }
     }
 
@@ -69,5 +69,17 @@ public class PreloginClient {
             login <USERNAME> <PASSWORD> - log in to play
             quit - exit the program
             help - show this message""";
+    }
+
+    private String describeError(ResponseException e) {
+        if (e.statusCode() == 0) {
+            return "Could not reach the server. Is it running?";
+        }
+        return switch (e.statusCode()) {
+            case 400 -> "Please check your input and try again.";
+            case 401 -> "Login failed. Check your username and password.";
+            case 403 -> "That username is already taken.";
+            default -> e.getMessage().replace("Error: ", "");
+        };
     }
 }

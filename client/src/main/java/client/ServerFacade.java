@@ -49,7 +49,7 @@ public class ServerFacade {
             http.connect();
 
             if (http.getResponseCode() != 200) {
-                throw new ResponseException(readError(http));
+                throw new ResponseException(http.getResponseCode(), readError(http));
             }
             if (responseClass == null) {
                 return null;
@@ -61,7 +61,7 @@ public class ServerFacade {
         } catch (ResponseException ex) {
             throw ex;
         } catch (Exception ex) {
-            throw new ResponseException(ex.getMessage());
+            throw new ResponseException(0, ex.getMessage());
         }
     }
 
