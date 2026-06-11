@@ -14,6 +14,7 @@ public class ChessGame {
 
     private ChessGame.TeamColor teamTurn = TeamColor.WHITE;
     private ChessBoard board = new ChessBoard();
+    private boolean gameOver = false;
 
     //decided not to do extra credit
 
@@ -165,6 +166,14 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         return board;
+    }
+
+    public boolean isGameOver() {
+        return gameOver;
+    }
+
+    public void setGameOver(boolean gameOver) {
+        this.gameOver = gameOver;
     }
 
 
