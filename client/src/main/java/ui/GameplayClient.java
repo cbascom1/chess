@@ -52,7 +52,7 @@ public class GameplayClient implements ServerMessageObserver {
             case "leave" -> leave();
             case "move" -> makeMove(params);
             case "resign" -> resign();
-            case "highlight" -> "Highlighting is added in the next step.";
+            case "highlight" -> highlight(params);
             default -> help();
         };
     }
@@ -160,5 +160,29 @@ public class GameplayClient implements ServerMessageObserver {
             case "n" -> ChessPiece.PieceType.KNIGHT;
             default -> null;
         };
+    }
+
+    private String highlight(String[] params) {
+        if (game == null) {
+            return "No game loaded yet.";
+        }
+        if (params.length != 1) {
+            return "Usage: highlight <square>, e.g. 'highlight e2'";
+        }
+        ChessPosition square = parsePosition(params[0]);
+        if (square == null) {
+            return "Invalid square. Use a format like 'e2'.";
+        }
+        if (game.getBoard().getPiece(square) == null) {
+            return "There is no piece on " + params[0] + ".";
+        }
+        var moves = game.validMoves(square);
+        var targets = new java.util.HashSet<ChessPosition>();
+        if (moves != null) {
+            for (var move : moves) {
+                targets.add(move.getEndPosition());
+            }
+        }
+        return BoardRenderer.render(game.getBoard(), perspective(), square, targets);
     }
 }

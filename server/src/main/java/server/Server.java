@@ -37,7 +37,11 @@ public class Server {
             throw new RuntimeException("Failed to initialize database: " + ex.getMessage(), ex);
         }
 
-        javalin = Javalin.create(config -> config.staticFiles.add("web"));
+        javalin = Javalin.create(config -> {
+            config.staticFiles.add("web");
+            config.jetty.modifyWebSocketServletFactory(factory ->
+                    factory.setIdleTimeout(java.time.Duration.ofMinutes(60)));
+        });
 
         WebSocketHandler wsHandler = new WebSocketHandler(dataAccess);
         javalin.ws("/ws", ws -> {

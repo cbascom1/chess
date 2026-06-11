@@ -34,14 +34,7 @@ public class WebSocketFacade extends Endpoint {
             URI socketURI = new URI(socketUrl + "/ws");
 
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-            this.session = container.connectToServer(this, socketURI);
-
-            this.session.addMessageHandler(new MessageHandler.Whole<String>() {
-                @Override
-                public void onMessage(String message) {
-                    handleMessage(message);
-                }
-            });
+            container.connectToServer(this, socketURI);
         } catch (DeploymentException | IOException | URISyntaxException ex) {
             throw new ResponseException(500, ex.getMessage());
         }
@@ -49,6 +42,13 @@ public class WebSocketFacade extends Endpoint {
 
     @Override
     public void onOpen(Session session, EndpointConfig endpointConfig) {
+        this.session = session;
+        session.addMessageHandler(new MessageHandler.Whole<String>() {
+            @Override
+            public void onMessage(String message) {
+                handleMessage(message);
+            }
+        });
     }
 
     private void handleMessage(String message) {

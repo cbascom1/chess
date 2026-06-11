@@ -59,6 +59,7 @@ public class Repl {
                     }
                 }
             } catch (Throwable e) {
+                e.printStackTrace();
                 System.out.println("Something went wrong. Please try again.");
             }
         }
