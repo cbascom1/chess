@@ -20,6 +20,7 @@ import java.util.Map;
 import service.UserService;
 
 import service.GameService;
+import server.websocket.WebSocketHandler;
 
 
 public class Server {
@@ -38,7 +39,13 @@ public class Server {
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
-        // Register your endpoints and exception handlers here.
+        WebSocketHandler wsHandler = new WebSocketHandler(dataAccess);
+        javalin.ws("/ws", ws -> {
+            ws.onConnect(wsHandler::onConnect);
+            ws.onMessage(wsHandler::onMessage);
+            ws.onClose(wsHandler::onClose);
+            ws.onError(wsHandler::onError);
+        });
 
         javalin.delete("/db", ctx -> {
             new ClearService(dataAccess).clear();
