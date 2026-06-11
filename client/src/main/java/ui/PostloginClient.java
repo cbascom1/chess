@@ -14,6 +14,8 @@ public class PostloginClient {
     private final ServerFacade facade;
     private final String authToken;
     private java.util.List<ServerTypes.GameListItem> lastGames = new java.util.ArrayList<>();
+    private Integer pendingGameID = null;
+    private chess.ChessGame.TeamColor pendingColor = null;
 
     public PostloginClient(String serverUrl, String authToken) {
         this.facade = new ServerFacade(serverUrl);
@@ -111,11 +113,10 @@ public class PostloginClient {
         int gameID = lastGames.get(index).gameID();
         try {
             facade.joinGame(authToken, color.toUpperCase(), gameID);
-            ChessBoard board = new ChessBoard();
-            board.resetBoard();
-            ChessGame.TeamColor perspective = color.equals("white")
+            this.pendingGameID = gameID;
+            this.pendingColor = color.equals("white")
                     ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
-            return "\n" + BoardRenderer.render(board, perspective);
+            return "enterGame";
         } catch (ResponseException e) {
             return describeError(e);
         }
@@ -136,9 +137,9 @@ public class PostloginClient {
             return "No game with that number. Try 'list' first.";
         }
         int gameID = lastGames.get(index).gameID();
-        ChessBoard board = new ChessBoard();
-        board.resetBoard();
-        return "\n" + BoardRenderer.render(board, ChessGame.TeamColor.WHITE);
+        this.pendingGameID = gameID;
+        this.pendingColor = null;
+        return "enterGame";
     }
 
     public String logout() {
@@ -155,6 +156,16 @@ public class PostloginClient {
             return "Could not reach the server.";
         }
         return e.getMessage().replace("Error: ", "");
+    }
+
+    public Integer consumePendingGameID() {
+        Integer id = pendingGameID;
+        pendingGameID = null;
+        return id;
+    }
+
+    public chess.ChessGame.TeamColor consumePendingColor() {
+        return pendingColor;
     }
 
 }
